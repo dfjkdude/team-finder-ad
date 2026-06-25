@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16
+    env_file:
+      - .env
+    container_name: teamfinder_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+  backend:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+    depends_on:
+      - db
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+volumes:
+  postgres_data:
+  media:

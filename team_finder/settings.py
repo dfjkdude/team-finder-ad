@@ -107,11 +107,11 @@ LOGIN_URL = 'users:login'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = config("STATIC_URL", default="static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 # Media files
 
-MEDIA_URL = "/media/"
+MEDIA_URL = config("MEDIA_URL", default="/media/")
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type

@@ -1,6 +1,7 @@
 import re
 
 from django.forms import ValidationError
+from django.shortcuts import redirect
 
 
 class GitHubURLValidationMixin:
@@ -14,3 +15,12 @@ class GitHubURLValidationMixin:
         elif re.match(pattern, github_url):
             return github_url
         raise ValidationError("Недопустимый формат записи ссылки на GitHub")
+
+
+class ProjectOwnerRequiredMixin:
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.owner != request.user and not request.user.is_staff:
+            return redirect('projects:detail', pk=obj.pk)
+        return super().dispatch(request, *args, **kwargs)   

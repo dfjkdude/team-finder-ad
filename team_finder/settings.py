@@ -13,8 +13,6 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default='127.0.0.1,localhost').split(
 
 AUTH_USER_MODEL = 'users.User'
 
-# Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -22,8 +20,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "users.apps.UsersConfig",
     "projects.apps.ProjectsConfig",
-    "users.apps.UsersConfig"
 ]
 
 MIDDLEWARE = [

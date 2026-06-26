@@ -6,22 +6,12 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView)
 
+from utils.mixins import ProjectOwnerRequiredMixin
 from . import constants
 from .forms import ProjectCreateForm
 from .models import Project
 
-User = get_user_model()
-
-
-class ProjectOwnerRequiredMixin:
-    def get_object(self, queryset=None):
-        return super().get_object(queryset=queryset)
-
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.owner != request.user and not request.user.is_staff:
-            return redirect('projects:detail', pk=obj.pk)
-        return super().dispatch(request, *args, **kwargs)
+User = get_user_model() 
 
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
@@ -33,9 +23,6 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse(
-            'projects:detail', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -49,10 +36,6 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectOwnerRequiredMixin,
     template_name = 'projects/create-project.html'
     form_class = ProjectCreateForm
 
-    def get_success_url(self):
-        return reverse(
-            'projects:detail', kwargs={'pk': self.object.pk})
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_edit'] = True
@@ -65,7 +48,7 @@ class ProjectListView(ListView):
     paginate_by = constants.PROJECTS_PER_PAGE
 
     def get_queryset(self):
-        return Project.objects.select_related('owner').order_by('-created_at')
+        return Project.objects.select_related('owner').prefetch_related('participants').order_by('-created_at')
 
 
 class ProjectDetailView(DetailView):

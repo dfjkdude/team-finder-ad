@@ -6,7 +6,9 @@ from django.shortcuts import reverse, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
+from . import constants 
 from .forms import UserCreateForm, UserUpdateForm
+
 
 User = get_user_model()
 
@@ -14,7 +16,7 @@ User = get_user_model()
 class UserListView(ListView):
     model = User
     template_name = 'users/participants.html'
-    paginate_by = 12
+    paginate_by = constants.USERS_PAGINATION_NUMBER
 
     def get_queryset(self):
         queryset = User.objects.all()
